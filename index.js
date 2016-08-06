@@ -25,10 +25,10 @@ function pinboard(args) {
 
   var extract = (files, post) => {
     var date = moment(post.time)
-    var filename = `${filePrefix}-${date.format('YYYY-MM-DD')}.md`
+    var filename = `${filePrefix}-${date.format('YYYY')}-${date.week()}.md`
     if (!files[filename]) {
       files[filename] = [
-        `title: ${titlePrefix} ${date.format('MMM Do YYYY')}`,
+        `title: ${titlePrefix} ${date.format('YYYY')} Week ${date.week()}`,
         `date: ${date.format('YYYY-MM-DD')}`,
         'categories:']
       files[filename] = files[filename]
