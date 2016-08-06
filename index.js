@@ -22,32 +22,41 @@ function pinboard(args) {
   var filePrefix = config.prefix || 'around-the-web'
   var titlePrefix = config.prefix || 'Around the Web'
   var categories = config.categories || ['around the web']
+  var layout = config.layout || 'post'
 
   var extract = (files, post) => {
     var date = moment(post.time)
     var filename = `${filePrefix}-${date.format('YYYY')}-${date.week()}.md`
     if (!files[filename]) {
-      files[filename] = [
-        `title: ${titlePrefix} ${date.format('YYYY')} Week ${date.week()}`,
-        `date: ${date.format('YYYY-MM-DD')}`,
-        'categories:']
-      files[filename] = files[filename]
-        .concat(categories.map(c => `- ${c}`))
-      files[filename].push('---')
-      files[filename].push('')
+      files[filename] = {
+        filename,
+        layout,
+        date,
+        content: []
+      }
     }
-    var file = files[filename]
-    file.push(`## [${post.description}](${post.href})`)
-    file.push(post.extended)
-    file.push('')
+    if (date > files[filename].date) files[filename].date = date
+    var content = files[filename].content
+    content.push(`## [${post.description}](${post.href})`)
+    content.push(post.extended)
+    content.push('')
     return files
   }
 
   var format = files => {
-    return R.keys(files).map(filename => {
+    return R.values(files).map(file => {
+      var lines = [
+        `layout: ${file.layout}`,
+        `title: ${titlePrefix} for ${file.date.format('MMMM D, YYYY')}`,
+        `date: ${file.date.format('YYYY-MM-DD')}`,
+        `categories:`
+      ]
+      lines = lines.concat(categories.map(c => `- ${c}`))
+      lines.push('---\n')
+      lines = lines.concat(file.content)
       return {
-        filename,
-        content: files[filename].join('\n')
+        filename: file.filename,
+        content: lines.join('\n')
       }
     })
   }

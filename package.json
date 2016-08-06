@@ -1,6 +1,6 @@
 {
   "name": "hexo-pinboard-importer",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "hexo pinboard importer command plugin",
   "main": "index.js",
   "scripts": {
