@@ -24,6 +24,8 @@ function pinboard(args) {
   var categories = config.categories || ['around the web']
   var layout = config.layout || 'post'
 
+  var processTags = R.pipe(R.split(' '), R.without(config.tag))
+
   var extract = (files, post) => {
     var date = moment(post.time)
     var filename = `${filePrefix}-${date.format('YYYY')}-${date.week()}.md`
@@ -32,6 +34,7 @@ function pinboard(args) {
         filename,
         layout,
         date,
+        tags: processTags(post.tags),
         content: []
       }
     }
@@ -52,6 +55,8 @@ function pinboard(args) {
         `categories:`
       ]
       lines = lines.concat(categories.map(c => `- ${c}`))
+      lines.push('tags:')
+      lines = lines.concat(file.tags.map(t => `- ${t}`))
       lines.push('---\n')
       lines = lines.concat(file.content)
       return {
